@@ -1,0 +1,80 @@
+import pyexcel as pe
+import glob
+import os
+for filename in os.listdir(os.getcwd()):
+    print(filename)
+#sheet = pe.get_sheet(file_name="13980626.2.xls")
+# "example.csv","example.xlsx","example.xlsm"
+#my_array = pe.get_array(file_name="13980626.2.xls")
+#my_array = my_array[-12:-1]+my_array[1:3]
+#print(my_array)
+def fin_all_excel_file(directory):
+    pass
+#fin_all_excel_file('~/Desktop/وصال')
+    
+def _find_food_and_its_number_and_cost(name_of_file):
+    sheet = pe.get_sheet(file_name=name_of_file)
+    our_eat =[i for i in  sheet.column[1] if i != '' and i != 'عنوان']
+    our_number_of_that_buy =[i for i in sheet.column[2] if i != '' and i != 'تعداد']
+    our_jam_kol = [i for i in sheet.column[3] if i != ''][1:]
+    if (len(our_eat) == len(our_number_of_that_buy) == len(our_jam_kol)):
+        dict = {}
+        for i in range(len(our_eat)):
+            dict[our_eat[i]] = [int(our_jam_kol[i]),int(our_number_of_that_buy[i]),int(our_jam_kol[i])/int(our_number_of_that_buy[i])]
+        return dict
+    print('your information is range')
+
+def _is_this_file_true(name_of_file):
+    my_array = pe.get_array(file_name=name_of_file)
+    my_array = my_array[-12:-1]+my_array[1:3]
+    data = ""
+    for i in my_array[-2][0].split('،')[-1].split(':')[1].split('/'):
+        data = data + i
+    data = data[1:]
+    if data in name_of_file :
+        print('ok')
+        return 1
+    return 0
+#is_this_file_true('13980626.2.xls')
+
+def _take_out_important_information(name_of_file):
+    my_array = pe.get_array(file_name=name_of_file)
+    my_array = my_array[-12:-1]+my_array[1:3]
+    if _is_this_file_true(name_of_file):
+        list_of_food = _find_food_and_its_number_and_cost(name_of_file)
+        karbar_shift =  my_array[-1][0].split(':')[1]
+        jam_badeh_kary =  my_array[-3][0].split(':')[1]
+        jam_kol_anam = my_array[-4][0].split(':')[1]
+        jam_kol_frosh = my_array[-5][0].split(':')[1]
+        jam_frosh_ahtabar = my_array[-6][0].split(':')[1]
+        jam_frosh_naghdi = my_array[-7][0].split(':')[1]
+        jam_pik = my_array[-8][0].split(':')[1]
+        jam_avarez = my_array[-9][0].split(':')[1]
+        jam_maliat = my_array[-10][0].split(':')[1]
+        jam_service = my_array[-11][0].split(':')[1]
+        jam_takhfif = my_array[-12][0].split(':')[1]
+        time =  my_array[-2][0].split('،')[-1].split(':')[1].split('/')
+        dict = {'jam_takhfif':jam_takhfif , 'jam_service':jam_service , 'jam_maliat':jam_maliat,'jam_avarez':jam_avarez,'jam_pik':jam_pik,'jam_forosh_naghdi':jam_frosh_naghdi ,'jam_frosh_ahtabar':jam_frosh_ahtabar,'jam_kol_frosh':jam_kol_frosh,'jam_kol_anam':jam_kol_anam,'jam_badeh_kary':jam_badeh_kary,'list_of_food':list_of_food}
+        return 1,time,{karbar_shift : dict}
+    else :
+        print("name 0f site and time not correct")
+        return 0,{} 
+#take_out_important_information('13980626.2.xls')
+#{"_id":time,'name_of_resurant':name_of_restaran,'address':address,'information_of_resturan':dictionary_of_resturan})
+def save_data_in_excel(information,file_name):
+
+    time = information['time']
+    name_of_resturan = information['name_of_restarn']
+    address = information['address']
+    information_of_food = information['dicionary_of_resturan']['list_of_food']
+    list_of_food =[]
+    for key in information_of_food:
+        list_of_food += [[key]]
+    pe.save_as(array=data,dest_file_name=file_name,dest_delimiter=':')
+    
+"""
+import json
+import pyexcel as pe
+>>> book_dict = p.get_book_dict(file_name="book.xls")
+for key, item in book_dict.items():
+     print(json.dumps({key: item}))"""
